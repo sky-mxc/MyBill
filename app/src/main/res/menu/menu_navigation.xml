@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single" >
+
+            <item android:title="账单"
+                android:id="@+id/bill"
+
+                android:icon="@mipmap/ic_receipt_black_24px"/>
+             <item android:title="票据"
+                    android:id="@+id/ballot"
+                 android:checked="true"
+                    android:icon="@mipmap/ic_insert_chart_white_24px"/>
+<!---->
+            <item android:title="其他">
+                <menu>
+                    <item android:title="教程"
+                        android:id="@+id/course"
+                        android:icon="@mipmap/ic_school_black_24px"/>
+                    <item android:title="设置"
+                        android:id="@+id/setting"
+                        android:icon="@mipmap/ic_settings_black_24px"/>
+                    <item android:title="吐槽and帮助"
+                        android:id="@+id/help"
+                        android:icon="@mipmap/spam"/>
+                    <item android:title="推荐给好友"
+                        android:id="@+id/push"
+                        android:icon="@mipmap/social"/>
+                </menu>
+            </item>
+    </group>
+</menu>
