@@ -5,11 +5,11 @@
 
             <item android:title="账单"
                 android:id="@+id/bill"
-
+                android:checked="true"
                 android:icon="@mipmap/ic_receipt_black_24px"/>
              <item android:title="票据"
                     android:id="@+id/ballot"
-                 android:checked="true"
+
                     android:icon="@mipmap/ic_insert_chart_white_24px"/>
 <!---->
             <item android:title="其他">

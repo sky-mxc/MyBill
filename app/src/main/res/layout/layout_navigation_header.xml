@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@mipmap/header_bg">
 
-    <ImageView
+    <com.skymxc.mybill.util.ImageViewPlus
         android:id="@+id/head_image"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_margin="20dp"
+        app:outCircleColor="@color/colorPrimaryDark"
+        app:outCircleWidth="2dp"
         android:src="@mipmap/default_img_small"
         android:clickable="true"/>
 

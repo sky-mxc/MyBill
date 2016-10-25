@@ -5,8 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.skymxc.mybill.MainActivity">
+    
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"></android.support.v7.widget.Toolbar>
 
     <android.support.v4.widget.SlidingPaneLayout
+        android:layout_marginTop="?attr/actionBarSize"
+        android:id="@+id/sliding"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -19,7 +27,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="#0f0">
 
         </LinearLayout>
 
