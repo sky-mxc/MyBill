@@ -3,6 +3,7 @@ package com.skymxc.mybill;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+import com.skymxc.mybill.util.FileUtil;
 import com.skymxc.mybill.util.ImageViewPlus;
 import com.skymxc.mybill.util.PermissionUtil;
 
@@ -78,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.choose_camera:
                 Log.i(TAG, "onClick: choose_camera");
-                // TODO: 2016/10/25  相机拍照 创建头像
+                //   相机拍照 创建头像
                 if(window.isShowing()){
                     window.dismiss();
                 }
@@ -90,11 +92,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(window.isShowing()){
                     window.dismiss();
                 }
+                callPhoto();
                 break;
             case R.id.account:
                 showExit(v);
                 break;
         }
+    }
+
+    /**
+     * 图库选取图片权限请求
+     */
+    private void callPhoto() {
+        invokePhoto();
+    }
+
+    /**
+     * 执行图库选取图片
+     */
+    private void invokePhoto() {
+        Log.i(TAG, "invokePhoto: ");
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,"image/*");
+
+        startActivityForResult(intent,PHOTO);
+
     }
 
     /**
@@ -139,15 +161,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String state = Environment.getExternalStorageState();
         if(state.equals(Environment.MEDIA_MOUNTED)) {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            File file = new File(Environment.getExternalStorageDirectory(), "mybill");
-            if (!file.exists()) {
-                file.mkdir();
-            }
-            mfile = new File(file, "header.jpg");
-            if (mfile.exists()){
-                mfile.delete();
-            }
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mfile));
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(FileUtil.getHeadImage()));
             startActivityForResult(intent, CAMERA);
         }else{
             Toast.makeText(this, "检测不到SD卡，无法使用", Toast.LENGTH_SHORT).show();
@@ -255,11 +269,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
          switch (requestCode){
              case CAMERA:
                  //调用裁剪功能
-                 startPhotoZoom(Uri.fromFile(mfile));
+                 startPhotoZoom(Uri.fromFile(FileUtil.getHeadImage()));
                  break;
              case ZOOM:
                  Bitmap bmp = data.getParcelableExtra("data");
                  headImg.setImageBitmap(bmp);
+                 break;
+             case PHOTO:
+                 String projection=MediaStore.Images.Media.DATA;
+              Cursor cursor= getContentResolver().query(data.getData(),new String[]{ projection},null,null,null);
+                 if (cursor!=null && cursor.moveToFirst()){
+                     String path = cursor.getString(cursor.getColumnIndex(projection));
+                     Log.i(TAG, "onActivityResult: photoPath="+path);
+                     startPhotoZoom(Uri.fromFile(FileUtil.saveHeadImg(path)));
+                 }
+                 cursor.close();
                  break;
          }
         }
