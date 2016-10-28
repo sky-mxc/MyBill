@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -15,20 +16,23 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.PermissionChecker;
 import android.support.v4.widget.SlidingPaneLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.skymxc.mybill.util.FileUtil;
 import com.skymxc.mybill.util.ImageViewPlus;
 import com.skymxc.mybill.util.PermissionUtil;
-
-import java.io.File;
 
 /**
  * 主窗体
@@ -38,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = "MainActivity";
 
     private static final int CAMERA_PERMISSION =0;
-    private static final int PHOTO_PERMISSION =1;
+//    private static final int PHOTO_PERMISSION =1;
     private static final int CAMERA = 2;
     private static final int PHOTO = 3;
     private static final int ZOOM = 4;
@@ -48,7 +52,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private NavigationView navigation;
     private ImageViewPlus headImg;
     private PopupWindow window;
-    private File mfile;
+    private ActionBar actionBar;
+    private TextView navigationTxt;
+    private ImageView navigationIco;
 
 
     @Override
@@ -62,18 +68,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initView() {
         slidingPane = (SlidingPaneLayout) findViewById(R.id.sliding);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        navigationTxt = (TextView) findViewById(R.id.navigation_text);
+        navigationIco = (ImageView) findViewById(R.id.navigation_ico);
+        navigationIco.setOnClickListener(this);
+        setSupportActionBar(toolbar);
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
         navigation = (NavigationView) findViewById(R.id.navigation);
         headImg = (ImageViewPlus) navigation.getHeaderView(0).findViewById(R.id.head_image);
         headImg.setOnClickListener(this);
+        if (FileUtil.getHeadImage().exists()){
+            headImg.setImageBitmap(BitmapFactory.decodeFile(FileUtil.getHeadImage().getPath()));
+        }
         navigation.getHeaderView(0).findViewById(R.id.account).setOnClickListener(this);
         navigation.setNavigationItemSelectedListener(onNavigationItemSelectedListener);
-        setSupportActionBar(toolbar);
         slidingPane.setSliderFadeColor(Color.parseColor("#A0000000"));
+        slidingPane.setPanelSlideListener(slidLis);
 
     }
 
     @Override
     public void onClick(View v) {
+        Log.i(TAG, "onClick: ");
         switch (v.getId()){
             case R.id.head_image:
                 showChooseHeadImg(v);
@@ -88,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.choose_photo:
                 Log.i(TAG, "onClick: choose_photo");
-                // TODO: 2016/10/25  相册选取图片 创建图片
+                //  相册选取图片 创建图片
                 if(window.isShowing()){
                     window.dismiss();
                 }
@@ -96,6 +112,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.account:
                 showExit(v);
+                break;
+            case R.id.navigation_ico:
+                if (slidingPane.isOpen()){
+                    slidingPane.closePane();
+                }else{
+                    slidingPane.openPane();
+                }
                 break;
         }
     }
@@ -216,6 +239,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         window.showAsDropDown(v,5,5);
     }
 
+    //导航菜单滑动事件
+    private SlidingPaneLayout.PanelSlideListener slidLis =new SlidingPaneLayout.PanelSlideListener() {
+        @Override
+        public void onPanelSlide(View panel, float slideOffset) {
+            Log.i(TAG, "onPanelSlide: offset="+slideOffset*90);
+            RotateAnimation rotateAnimation = new RotateAnimation(0,slideOffset*90, Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
+            rotateAnimation.setDuration(100);
+            rotateAnimation.setFillAfter(true);
+            navigationIco.startAnimation(rotateAnimation);
+        }
+
+        @Override
+        public void onPanelOpened(View panel) {
+
+        }
+
+        @Override
+        public void onPanelClosed(View panel) {
+
+        }
+    };
+
     //PopupMenu 菜单项点击事件
     private PopupMenu.OnMenuItemClickListener onMenuItemClickListener =new PopupMenu.OnMenuItemClickListener() {
         @Override
@@ -239,6 +284,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case R.id.bill:
                     //   去往账单 关闭窗口
                     slidingPane.closePane();
+                    navigationTxt.setText("账单");
                     break;
                 default:
                     Toast.makeText(MainActivity.this, "此功能暂未开放", Toast.LENGTH_SHORT).show();

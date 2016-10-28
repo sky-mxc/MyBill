@@ -10,7 +10,31 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"></android.support.v7.widget.Toolbar>
+        android:background="@color/colorPrimary">
+        
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/navigation_ico"
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:src="@mipmap/menu"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                android:layout_marginRight="10dp"/>
+
+            <TextView
+                android:id="@+id/navigation_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="账单"
+                android:layout_gravity="center_vertical"
+                android:textSize="20sp"
+                android:textColor="@android:color/white"/>
+        </LinearLayout>
+    </android.support.v7.widget.Toolbar>
 
     <android.support.v4.widget.SlidingPaneLayout
         android:layout_marginTop="?attr/actionBarSize"
@@ -25,12 +49,112 @@
             <include layout="@layout/layout_navigation"/>
         </FrameLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#0f0">
 
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:background="@color/colorPrimary">
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/date_ico"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:src="@mipmap/ic_event_black_24px"
+                        android:clickable="true"/>
+
+                    <TextView
+                        android:id="@+id/date_year"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2016"
+                        android:layout_centerHorizontal="true"
+                        android:textColor="@android:color/white"/>
+
+                    <TextView
+                        android:id="@+id/date_month"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:text="10月"
+                        android:textColor="@android:color/white"
+                        android:textSize="25sp"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentBottom="true"
+                        android:drawableRight="@mipmap/arrow_drop_down"/>
+
+                    <TextView
+                        android:layout_width="1dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/white"
+                        android:layout_alignParentRight="true"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:id="@+id/expenditure"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:textColor="@android:color/white"
+                        android:text="本月支出"/>
+                   <TextView
+                        android:id="@+id/expenditure_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:textColor="@android:color/white"
+                        android:text="0.00"
+                       android:layout_alignParentBottom="true"/>
+                    <TextView
+                        android:layout_width="1dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/white"
+                        android:layout_alignParentRight="true"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:id="@+id/income"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:textColor="@android:color/white"
+                        android:text="本月收入"/>
+                   <TextView
+                        android:id="@+id/income_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:textColor="@android:color/white"
+                        android:text="0.00"
+                       android:layout_alignParentBottom="true"/>
+
+                </RelativeLayout>
+
+
+            </LinearLayout>
+
+        </RelativeLayout>
 
     </android.support.v4.widget.SlidingPaneLayout>
 </RelativeLayout>
