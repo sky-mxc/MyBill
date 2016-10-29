@@ -3,6 +3,7 @@ package com.skymxc.mybill;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -25,11 +26,12 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.RotateAnimation;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -38,6 +40,8 @@ import android.widget.Toast;
 import com.skymxc.mybill.util.FileUtil;
 import com.skymxc.mybill.util.ImageViewPlus;
 import com.skymxc.mybill.util.PermissionUtil;
+
+import java.util.Calendar;
 
 /**
  * 主窗体
@@ -63,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FloatingActionButton fatAdd;
     private FloatingActionButton fatAddPen;
     private FloatingActionButton fatAddCamera;
+    private TextView yearTv;
+    private TextView monthTv;
 
 
     @Override
@@ -99,13 +105,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         slidingPane.setSliderFadeColor(Color.parseColor("#A0000000"));
         slidingPane.setPanelSlideListener(slidLis);
 
+        yearTv = (TextView) findViewById(R.id.date_year);
+        monthTv = (TextView) findViewById(R.id.date_month);
+
     }
 
     @Override
     public void onClick(View v) {
+//        boolean isPop = (fatAdd.getTag(R.id.key_is_pop)==null)?false: (boolean) fatAdd.getTag(R.id.key_is_pop);
+//        if (isPop){
+//            dismissPop(fatAdd);
+//
+//        }
         Log.i(TAG, "onClick: ");
         switch (v.getId()){
             case R.id.head_image:
+                //选择头像
                 showChooseHeadImg(v);
                 break;
             case R.id.choose_camera:
@@ -125,9 +140,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 callPhoto();
                 break;
             case R.id.account:
+                //弹出PopupMenu 退出当前账号显示
                 showExit(v);
                 break;
             case R.id.navigation_ico:
+                //窗口打开与关闭
                 if (slidingPane.isOpen()){
                     slidingPane.closePane();
                 }else{
@@ -135,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.add:
+                //弹出两个球球
                 boolean isPop = (v.getTag(R.id.key_is_pop)==null)?false: (boolean) v.getTag(R.id.key_is_pop);
                 Log.i(TAG, "onClick: isPop="+isPop);
                 if(isPop){
@@ -145,12 +163,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
             case R.id.add_camera:
+                //通过票据记账
                 Log.i(TAG, "onClick: add_camera");
+                Toast.makeText(this, "暂不支持此功能", Toast.LENGTH_SHORT).show();
+                dismissPop(fatAdd);
                 break;
             case R.id.add_pen:
+                //通过笔记账
                 Log.i(TAG, "onClick: add_pen");
+                dismissPop(fatAdd);
+                break;
+            case R.id.date_ico:
+            case R.id.date_month:
+            case R.id.date_year:
+                Log.i(TAG, "onClick: 弹出日期Dialog");
+                popDateDialog();
                 break;
         }
+    }
+
+    /**
+     * 弹出日期对话框
+     */
+    private void popDateDialog() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        DatePickerDialog dateDialog = new DatePickerDialog(this,R.style.DateDialog, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                Log.i(TAG, "onDateSet: year="+year+";month="+month);
+                yearTv.setText(year+"");
+                monthTv.setText(month+"月");
+                // TODO: 2016/10/29 根据日期更新 数据 
+            }
+        },year,month,day);
+
+        dateDialog.show();
+        ((ViewGroup)((ViewGroup)dateDialog.getDatePicker().getChildAt(0)).getChildAt(0)).getChildAt(2).setVisibility(View.GONE);
     }
 
     /**
@@ -422,13 +473,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        boolean isPop = (fatAdd.getTag(R.id.key_is_pop)==null)?false: (boolean) fatAdd.getTag(R.id.key_is_pop);
-        if (isPop){
-            dismissPop(fatAdd);
-            return true;
-        }
-        return super.dispatchTouchEvent(ev);
-    }
+
 }

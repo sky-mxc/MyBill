@@ -74,7 +74,8 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:src="@mipmap/ic_event_black_24px"
-                        android:clickable="true"/>
+                        android:clickable="true"
+                        android:onClick="onClick"/>
 
                     <TextView
                         android:id="@+id/date_year"
@@ -82,6 +83,8 @@
                         android:layout_height="wrap_content"
                         android:text="2016"
                         android:layout_centerHorizontal="true"
+                        android:clickable="true"
+                        android:onClick="onClick"
                         android:textColor="@android:color/white"/>
 
                     <TextView
@@ -94,6 +97,8 @@
                         android:textSize="25sp"
                         android:layout_alignParentRight="true"
                         android:layout_alignParentBottom="true"
+                        android:clickable="true"
+                        android:onClick="onClick"
                         android:drawableRight="@mipmap/arrow_drop_down"/>
 
                     <TextView
