@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = "MainActivity";
 
     private static final int CAMERA_PERMISSION =0;
-//    private static final int PHOTO_PERMISSION =1;
     private static final int CAMERA = 2;
     private static final int PHOTO = 3;
     private static final int ZOOM = 4;
