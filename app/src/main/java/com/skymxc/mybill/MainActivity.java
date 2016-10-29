@@ -1,5 +1,7 @@
 package com.skymxc.mybill;
 
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.PermissionChecker;
 import android.support.v4.widget.SlidingPaneLayout;
@@ -22,8 +25,10 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
+import android.view.animation.BounceInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -55,6 +60,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ActionBar actionBar;
     private TextView navigationTxt;
     private ImageView navigationIco;
+    private FloatingActionButton fatAdd;
+    private FloatingActionButton fatAddPen;
+    private FloatingActionButton fatAddCamera;
 
 
     @Override
@@ -70,6 +78,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         navigationTxt = (TextView) findViewById(R.id.navigation_text);
         navigationIco = (ImageView) findViewById(R.id.navigation_ico);
+        fatAdd = (FloatingActionButton) findViewById(R.id.add);
+        fatAddCamera = (FloatingActionButton) findViewById(R.id.add_camera);
+        fatAddPen = (FloatingActionButton) findViewById(R.id.add_pen);
+        fatAddCamera.setOnClickListener(this);
+        fatAddPen.setOnClickListener(this);
+        fatAdd.setOnClickListener(this);
         navigationIco.setOnClickListener(this);
         setSupportActionBar(toolbar);
         actionBar = getSupportActionBar();
@@ -120,7 +134,79 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     slidingPane.openPane();
                 }
                 break;
+            case R.id.add:
+                boolean isPop = (v.getTag(R.id.key_is_pop)==null)?false: (boolean) v.getTag(R.id.key_is_pop);
+                Log.i(TAG, "onClick: isPop="+isPop);
+                if(isPop){
+                    dismissPop(v);
+                }else{
+                    popAdd(v);
+                }
+
+                break;
+            case R.id.add_camera:
+                Log.i(TAG, "onClick: add_camera");
+                break;
+            case R.id.add_pen:
+                Log.i(TAG, "onClick: add_pen");
+                break;
         }
+    }
+
+    /**
+     * 关闭记账途径
+     */
+    private void dismissPop(View v) {
+        v.setTag(R.id.key_is_pop,false);
+        RotateAnimation rotate = new RotateAnimation(45,0,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
+        rotate.setDuration(500);
+        rotate.setFillAfter(true);
+        v.startAnimation(rotate);
+
+        //两个球球的关闭动画
+        fatAddPen.setTranslationX(0);
+        fatAddPen.setTranslationY(0);
+        fatAddCamera.setTranslationY(0);
+
+
+    }
+
+    /**
+     * 弹出 记账途径两个
+     */
+    private void popAdd(View v) {
+        v.setTag(R.id.key_is_pop,true);
+        RotateAnimation rotate = new RotateAnimation(0,45,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
+        rotate.setDuration(500);
+        rotate.setFillAfter(true);
+        v.startAnimation(rotate);
+
+        //记账的两个途径 弹出动画
+        PropertyValuesHolder translateXHolder = PropertyValuesHolder.ofFloat("translateX",-65f);
+        PropertyValuesHolder translateYHolder = PropertyValuesHolder.ofFloat("translateY",-25f);
+        PropertyValuesHolder translateYHolderC = PropertyValuesHolder.ofFloat("translateYC",-65f);
+        PropertyValuesHolder rotateHolder = PropertyValuesHolder.ofFloat("rotate",-350,0);
+
+        ValueAnimator moveShow = ValueAnimator.ofPropertyValuesHolder(translateXHolder,translateYHolder,rotateHolder,translateYHolderC);
+        moveShow.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+               float translateX= (float) animation.getAnimatedValue("translateX");
+               float translateY= (float) animation.getAnimatedValue("translateY");
+               float translateYC= (float) animation.getAnimatedValue("translateYC");
+                float rotate = (float) animation.getAnimatedValue("rotate");
+               fatAddPen.setTranslationX(translateX);
+               fatAddPen.setTranslationY(translateY);
+                fatAddPen.setRotation(rotate);
+                fatAddCamera.setTranslationY(translateYC);
+                fatAddCamera.setRotation(rotate);
+
+            }
+        });
+        moveShow.setDuration(1000);
+        moveShow.setInterpolator(new BounceInterpolator());
+        moveShow.start();
+
     }
 
     /**
@@ -279,6 +365,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private NavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener =new NavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            if (!slidingPane.isOpen()) return  false;
             Log.i(TAG, "onNavigationItemSelected: item="+item.getTitle());
             switch (item.getItemId()){
                 case R.id.bill:
@@ -333,5 +420,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                  break;
          }
         }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        boolean isPop = (fatAdd.getTag(R.id.key_is_pop)==null)?false: (boolean) fatAdd.getTag(R.id.key_is_pop);
+        if (isPop){
+            dismissPop(fatAdd);
+            return true;
+        }
+        return super.dispatchTouchEvent(ev);
     }
 }
