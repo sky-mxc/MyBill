@@ -4,7 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.LinearLayout;
+
+import com.skymxc.mybill.util.DBUtil;
+import com.skymxc.mybill.util.SDFUtil;
 
 /**
  * Created by sky-mxc
@@ -12,6 +16,7 @@ import android.widget.LinearLayout;
  */
 public class WelcomeActivity extends AppCompatActivity {
     private LinearLayout root;
+    private boolean ok = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -19,14 +24,30 @@ public class WelcomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_welcome);
 //        getSupportActionBar().hide();
         root = (LinearLayout) findViewById(R.id.root);
+
+
         root.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(WelcomeActivity.this,MainActivity.class);
-                startActivity(intent);
-                finish();
+                toMain();
             }
         },1000*2);
+        if (SDFUtil.isFirst(this)){
+            DBUtil.initData(this);
 
+        }
+        toMain();
+
+    }
+
+    private void toMain(){
+        Log.i("WelcomeActivity", "toMain: ");
+        if (ok){
+            Intent intent = new Intent(WelcomeActivity.this,MainActivity.class);
+            startActivity(intent);
+            finish();
+        }else{
+            ok=true;
+        }
     }
 }

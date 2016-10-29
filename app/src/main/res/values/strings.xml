@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MyBill</string>
+    <string name="is_first_key">key_is_first</string>
 </resources>
