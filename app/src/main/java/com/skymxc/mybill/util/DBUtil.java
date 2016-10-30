@@ -67,4 +67,14 @@ public class DBUtil {
     public static List<PayType> getPayTypes() {
         return  new Select().from(PayType.class).execute();
     }
+
+    /**
+     * 获取账单类型
+     * @param type  类型 收入|| 支出
+     * @return
+     */
+    public static List<BillType> getBillTypes(int type){
+        Log.i(TAG, "getBillTypes: type="+type);
+        return  new Select().from(BillType.class).where("type =?",type).execute();
+    }
 }

@@ -235,9 +235,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         v.startAnimation(rotate);
 
         //记账的两个途径 弹出动画
-        PropertyValuesHolder translateXHolder = PropertyValuesHolder.ofFloat("translateX",-65f);
-        PropertyValuesHolder translateYHolder = PropertyValuesHolder.ofFloat("translateY",-25f);
-        PropertyValuesHolder translateYHolderC = PropertyValuesHolder.ofFloat("translateYC",-65f);
+        PropertyValuesHolder translateXHolder = PropertyValuesHolder.ofFloat("translateX",-75f);
+        PropertyValuesHolder translateYHolder = PropertyValuesHolder.ofFloat("translateY",-35f);
+        PropertyValuesHolder translateYHolderC = PropertyValuesHolder.ofFloat("translateYC",-75f);
         PropertyValuesHolder rotateHolder = PropertyValuesHolder.ofFloat("rotate",-350,0);
 
         ValueAnimator moveShow = ValueAnimator.ofPropertyValuesHolder(translateXHolder,translateYHolder,rotateHolder,translateYHolderC);
