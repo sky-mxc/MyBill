@@ -77,4 +77,12 @@ public class DBUtil {
         Log.i(TAG, "getBillTypes: type="+type);
         return  new Select().from(BillType.class).where("type =?",type).execute();
     }
+
+    /**
+     * 获取全部货币类型
+     * @return
+     */
+    public static List<CurrencyType> getCureencyTypes() {
+        return new Select().from(CurrencyType.class).execute();
+    }
 }

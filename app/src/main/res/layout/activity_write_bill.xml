@@ -124,6 +124,7 @@
                android:layout_gravity="center_vertical"
                android:text="CNY"
                android:textSize="20sp"
+               android:clickable="true"
                android:drawableRight="@mipmap/fai"/>
 
        </LinearLayout>

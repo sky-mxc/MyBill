@@ -1,6 +1,7 @@
 package com.skymxc.mybill;
 
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 
 import com.skymxc.mybill.adapter.BillTypeAdapter;
 import com.skymxc.mybill.entity.BillType;
+import com.skymxc.mybill.entity.CurrencyType;
 import com.skymxc.mybill.entity.PayType;
 import com.skymxc.mybill.util.DBUtil;
 import com.skymxc.mybill.util.DateUtil;
@@ -44,12 +46,14 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
     private TextView tvBillType;
     private RecyclerView rvBillType;
     private List<BillType> billTypes;
+    private List<CurrencyType> currencyTypes;
     private BillTypeAdapter billTypeAdapter;
     private ImageView imgChooseBillType;
     private TextView tvBillNum;
+    private TextView tvCurrency;
     private boolean point =true;
     private boolean numEnable =true;
-
+    private CurrencyAdapter currencyAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +96,12 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
 
         //数目
         tvBillNum = (TextView) findViewById(R.id.bill_num);
+        //货币类型
+        tvCurrency = (TextView) findViewById(R.id.currency_type);
+        tvCurrency.setOnClickListener(this);
+        currencyTypes = DBUtil.getCureencyTypes();
+        tvCurrency.setTag(currencyTypes.get(0));
+        tvCurrency.setText(currencyTypes.get(0).getCurrency());
     }
 
 
@@ -131,9 +141,36 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
             case R.id.close_write_bill:
                 setResult(RESULT_CANCELED);
                 break;
+            case R.id.currency_type:
+                Log.i(TAG, "onClick: 切换货币类型");
+                changeCurrency();
+                break;
 
         }
 
+    }
+
+    /**
+     * 切换货币类型
+     */
+    private void changeCurrency() {
+        currencyAdapter = new CurrencyAdapter();
+        ListView lv = new ListView(this);
+        lv.setAdapter(currencyAdapter);
+        lv.setDividerHeight(0);
+         new AlertDialog.Builder(this)
+                .setTitle("货币类型")
+                .setView(lv)
+                .setNeutralButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.i(TAG, "onClick: cancel");
+                        tvCurrency.setTag(currencyTypes.get(0));
+                        tvCurrency.setText(currencyTypes.get(0).getCurrency());
+                    }
+                })
+                .setNegativeButton("OK", null)
+                .show();
     }
 
     /**
@@ -312,6 +349,20 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
         ((PayTypeAdapter)payTypeLv.getAdapter()).notifyDataSetChanged();
     }
 
+    /**
+     * 货币类型选择
+     */
+    private CompoundButton.OnCheckedChangeListener onCheckedChangeLis = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            tvCurrency.setTag(buttonView.getTag());
+            tvCurrency.setText(((CurrencyType)buttonView.getTag()).getCurrency());
+            currencyAdapter.notifyDataSetChanged();
+        }
+    };
+    /**
+     * 账单类型选择
+     */
     private View.OnClickListener onItemClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -371,6 +422,60 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
             payIcon = (ImageView) v.findViewById(R.id.pay_icon);
             payName = (TextView) v.findViewById(R.id.pay_name);
             payCheck = (CheckBox) v.findViewById(R.id.pay_check);
+        }
+    }
+
+    class CurrencyAdapter extends BaseAdapter{
+
+        @Override
+        public int getCount() {
+            return currencyTypes.size();
+        }
+
+        @Override
+        public CurrencyType getItem(int position) {
+            return currencyTypes.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return currencyTypes.get(position).getId();
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            CurrencyViewHolder holder ;
+            if (convertView ==null){
+                convertView = getLayoutInflater().inflate(R.layout.layout_currency_item,null);
+                holder = new CurrencyViewHolder(convertView);
+                convertView.setTag(holder);
+            }else{
+                holder = (CurrencyViewHolder) convertView.getTag();
+            }
+            CurrencyType currency = currencyTypes.get(position);
+            holder.tvName.setText(currency.getName());
+            holder.tvCurrency.setText(currency.getCurrency());
+            holder.check.setOnCheckedChangeListener(null);
+            CurrencyType currentC =(CurrencyType)tvCurrency.getTag();
+            if (currency.getId()==currentC.getId()){
+                holder.check.setChecked(true);
+            }else{
+                holder.check.setChecked(false);
+            }
+            holder.check.setOnCheckedChangeListener(onCheckedChangeLis);
+            holder.check.setTag(currency);
+            return convertView;
+        }
+    }
+
+    class CurrencyViewHolder {
+        TextView tvName;
+        TextView tvCurrency;
+        CheckBox check;
+        public CurrencyViewHolder(View v){
+            tvName = (TextView) v.findViewById(R.id.currency_name);
+            tvCurrency = (TextView) v.findViewById(R.id.currency_currency);
+            check = (CheckBox)  v.findViewById(R.id.currency_check);
         }
     }
 
