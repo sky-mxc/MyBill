@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_write_bill"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.skymxc.mybill.WriteBillActivity"
+    android:background="#fff">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/close_write_bill"
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:src="@mipmap/ic_close_white_24px"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                android:layout_marginRight="10dp"
+                android:onClick="onClick"/>
+
+            <TextView
+                android:id="@+id/change_bill_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="支出"
+                android:layout_gravity="center_vertical"
+                android:textSize="20sp"
+                android:clickable="true"
+                android:onClick="onClick"
+                android:drawableRight="@mipmap/arrow_drop_down"
+                android:textColor="@android:color/white"/>
+        </LinearLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/bill_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/drawable_bt_bg"
+                android:layout_margin="10dp"
+                android:padding="5dp"
+                android:text="201r5"
+                android:onClick="onClick"
+                android:textColor="@android:color/darker_gray"/>
+        <Button
+                android:id="@+id/pay_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/drawable_bt_bg"
+                android:layout_margin="10dp"
+                android:padding="5dp"
+                android:text="现金或其他"
+                android:onClick="onClick"
+                android:textColor="@android:color/darker_gray"/>
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_bill_type"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
+
+        </android.support.v7.widget.RecyclerView>
+
+
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="50dp"
+           android:orientation="horizontal"
+           android:background="@drawable/drawable_bt_bg">
+
+           <ImageView
+               android:id="@+id/choose_bill_type"
+               android:layout_width="40dp"
+               android:layout_height="40dp"
+               android:layout_gravity="center_vertical"
+               android:src="@mipmap/ic_map_canying"
+               android:scaleType="fitCenter"
+               android:layout_marginLeft="10dp"
+               android:layout_marginRight="10dp"/>
+
+           <TextView
+               android:id="@+id/bill_num"
+               android:layout_width="0dp"
+               android:layout_weight="1"
+               android:layout_height="match_parent"
+               android:singleLine="true"
+               android:textSize="25sp"
+               android:text="0.00"
+               android:textColor="#000"
+               android:gravity="right|center_vertical"
+               android:layout_gravity="center_vertical"
+               android:paddingRight="10dp"
+               android:background="@drawable/drawable_bt_bg"/>
+
+           <TextView
+               android:id="@+id/currency_type"
+               android:padding="10dp"
+               android:layout_width="@dimen/calc_right_width"
+               android:layout_height="match_parent"
+               android:gravity="center"
+               android:layout_gravity="center_vertical"
+               android:text="CNY"
+               android:textSize="20sp"
+               android:drawableRight="@mipmap/fai"/>
+
+       </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:orientation="horizontal"
+            android:background="#eee">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="3"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                   style="@style/calcRow">
+                    <TextView
+                        android:text="1"
+                       style="@style/calcNum"/>
+                   <TextView
+                       android:text="2"
+                       style="@style/calcNum"/>
+                   <TextView
+                       android:text="3"
+                       style="@style/calcNum"/>
+                </LinearLayout>
+
+
+                <LinearLayout
+                   style="@style/calcRow">
+                    <TextView
+                        android:text="4"
+                       style="@style/calcNum"/>
+                   <TextView
+                       android:text="5"
+                       style="@style/calcNum"/>
+                   <TextView
+                       android:text="6"
+                       style="@style/calcNum"/>
+                </LinearLayout>
+
+
+                <LinearLayout
+                   style="@style/calcRow">
+                    <TextView
+                        android:text="7"
+                       style="@style/calcNum"/>
+                   <TextView
+                       android:text="8"
+                       style="@style/calcNum"/>
+                   <TextView
+                       android:text="9"
+                       style="@style/calcNum"/>
+                </LinearLayout>
+
+
+                <LinearLayout
+                   style="@style/calcRow">
+                    <TextView
+                        android:id="@+id/calc_clear"
+                        android:text="C"
+                       style="@style/calcNum"/>
+                   <TextView
+                       android:text="0"
+                       style="@style/calcNum"/>
+                   <TextView
+                       android:id="@+id/calc_point"
+                       android:text="."
+                       style="@style/calcNum"/>
+                </LinearLayout>
+
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="@dimen/calc_right_width"
+                android:paddingRight="10dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:src="@mipmap/ic_delete_48_px"/>
+               <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                   android:gravity="center"
+                   android:background="@color/colorPrimary"
+                   android:textColor="#fff"
+                   android:textSize="25sp"
+                   android:text="保存"/>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int CAMERA = 2;
     private static final int PHOTO = 3;
     private static final int ZOOM = 4;
+    private static final int REQUEST_WRITE_BILL_PEN = 10;
 
     private SlidingPaneLayout slidingPane;
     private Toolbar toolbar;
@@ -171,6 +172,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //通过笔记账
                 Log.i(TAG, "onClick: add_pen");
                 dismissPop(fatAdd);
+                Intent intent = new Intent(this,WriteBillActivity.class);
+                startActivityForResult(intent,REQUEST_WRITE_BILL_PEN);
                 break;
             case R.id.date_ico:
             case R.id.date_month:

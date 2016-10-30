@@ -14,5 +14,23 @@
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
+    <style name="calcNum">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:background">@drawable/drawable_bt_bg</item>
+        <item name="android:onClick">onClick</item>
+    </style>
+
+    <style name="calcRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
 
 </resources>

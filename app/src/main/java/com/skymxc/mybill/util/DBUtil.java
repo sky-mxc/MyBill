@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.activeandroid.Model;
+import com.activeandroid.query.Select;
 import com.alibaba.fastjson.JSON;
 import com.skymxc.mybill.entity.BillType;
 import com.skymxc.mybill.entity.CurrencyType;
@@ -59,4 +60,11 @@ public class DBUtil {
     }
 
 
+    /**
+     * 获取全部支付类型
+     * @return
+     */
+    public static List<PayType> getPayTypes() {
+        return  new Select().from(PayType.class).execute();
+    }
 }
