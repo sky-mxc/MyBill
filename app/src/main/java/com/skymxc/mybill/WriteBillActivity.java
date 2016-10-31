@@ -26,6 +26,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.skymxc.mybill.adapter.BillTypeAdapter;
+import com.skymxc.mybill.entity.Bill;
 import com.skymxc.mybill.entity.BillType;
 import com.skymxc.mybill.entity.CurrencyType;
 import com.skymxc.mybill.entity.PayType;
@@ -38,6 +39,7 @@ import java.util.List;
 public class WriteBillActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private static final String TAG = "WriteBillActivity" ;
+    private static final int REQUET_REMARK =10;
     private Toolbar toolbar;
     private ListView payTypeLv;
     private List<PayType> payTypes;
@@ -96,6 +98,7 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
 
         //数目
         tvBillNum = (TextView) findViewById(R.id.bill_num);
+
         //货币类型
         tvCurrency = (TextView) findViewById(R.id.currency_type);
         tvCurrency.setOnClickListener(this);
@@ -158,7 +161,7 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
         ListView lv = new ListView(this);
         lv.setAdapter(currencyAdapter);
         lv.setDividerHeight(0);
-         new AlertDialog.Builder(this)
+        new AlertDialog.Builder(this,R.style.alertStyle)
                 .setTitle("货币类型")
                 .setView(lv)
                 .setNeutralButton("cancel", new DialogInterface.OnClickListener() {
@@ -170,7 +173,9 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
                     }
                 })
                 .setNegativeButton("OK", null)
+
                 .show();
+
     }
 
     /**
@@ -218,14 +223,14 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
         popChangeBillType.show();
     }
 
-    /**
+    /**d
      * 弹出选择支付方式
      */
     private void showChoosePayType() {
         payTypeLv = new ListView(this);
 
         payTypeLv.setAdapter(new PayTypeAdapter());
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(this,R.style.alertStyle)
                 .setTitle("支付方式")
                 .setView(payTypeLv)
                 .setNegativeButton("确定",null).show();
@@ -335,10 +340,30 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.to_remark:
-                // TODO: 2016/10/30 前往备注activity 
+                //  前往备注activity
+                Log.i(TAG, "onOptionsItemSelected: ");
+               BillInfoActivity.toWriteRemarkActivity(this,getBill(),REQUET_REMARK,10);
                 break;
         }
         return true;
+    }
+
+    private Bill getBill() {
+        Bill  bill = new Bill();
+        //时间
+        bill.setTime(((Date)  btBillDate.getTag()).getTime());
+        //支付方式
+        bill.setPayTypeId(((PayType)btPayType.getTag()).getId());
+        //数目
+        double num = getIntFormart(tvBillNum.getText().toString());
+        bill.setExpense(num);
+        //货币
+        CurrencyType currencyType = (CurrencyType) tvCurrency.getTag();
+        bill.setCurrencyTypeId(currencyType.getId());
+        //账单类型
+        BillType billType = (BillType) imgChooseBillType.getTag();
+        bill.setBillTypeId(billType.getId());
+        return  bill;
     }
 
     @Override

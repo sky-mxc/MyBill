@@ -32,5 +32,11 @@
         <item name="android:orientation">horizontal</item>
     </style>
 
+    <!--修改dialog 的高宽度-->
+    <style name="alertStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="windowFixedWidthMinor">300dp</item>
+        <item name="windowFixedHeightMajor">450dp</item>
+    </style>
+
 
 </resources>

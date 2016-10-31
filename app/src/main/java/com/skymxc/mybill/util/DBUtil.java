@@ -85,4 +85,23 @@ public class DBUtil {
     public static List<CurrencyType> getCureencyTypes() {
         return new Select().from(CurrencyType.class).execute();
     }
+
+    /**
+     * 获取 账单类型
+     * @param billTypeId  id
+     * @return 类型
+     */
+    public static BillType getBillType(long billTypeId) {
+
+        return  BillType.load(BillType.class,billTypeId);
+    }
+
+    /**
+     * 获取支付方式
+     * @param payTypeId id
+     * @return 支付方式对象
+     */
+    public static PayType getPayType(long payTypeId) {
+        return  PayType.load(PayType.class,payTypeId);
+    }
 }

@@ -79,4 +79,14 @@ public class DateUtil {
         }
      return date;
     }
+
+    /**
+     * 返回时间 字符串 yyyy/MM/dd E
+     * @param time
+     * @return
+     */
+    public static String getDateString(long time) {
+        Date date = new Date(time);
+        return  getStringFormart(date);
+    }
 }

@@ -1,5 +1,8 @@
 package com.skymxc.mybill.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
@@ -9,7 +12,7 @@ import com.activeandroid.annotation.Table;
  * 账单
  */
 @Table(name = "Bill")
-public class Bill extends Model {
+public class Bill extends Model implements Parcelable {
 
     //账单时间
     @Column(name = "time")
@@ -45,6 +48,26 @@ public class Bill extends Model {
     }
 
 
+    protected Bill(Parcel in) {
+        time = in.readLong();
+        expense = in.readDouble();
+        billTypeId = in.readLong();
+        remarks = in.readString();
+        currencyTypeId = in.readLong();
+        payTypeId = in.readLong();
+    }
+
+    public static final Creator<Bill> CREATOR = new Creator<Bill>() {
+        @Override
+        public Bill createFromParcel(Parcel in) {
+            return new Bill(in);
+        }
+
+        @Override
+        public Bill[] newArray(int size) {
+            return new Bill[size];
+        }
+    };
 
     public void setTime(long time) {
         this.time = time;
@@ -93,5 +116,21 @@ public class Bill extends Model {
 
     public long getPayTypeId() {
         return payTypeId;
+    }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(time);
+        dest.writeDouble(expense);
+        dest.writeLong(billTypeId);
+        dest.writeString(remarks);
+        dest.writeLong(currencyTypeId);
+        dest.writeLong(payTypeId);
     }
 }

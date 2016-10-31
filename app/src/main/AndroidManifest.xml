@@ -24,6 +24,8 @@
         <activity android:name=".WriteBillActivity">
 
         </activity>
+
+        <activity android:name=".BillInfoActivity"/>
     </application>
 
 </manifest>
