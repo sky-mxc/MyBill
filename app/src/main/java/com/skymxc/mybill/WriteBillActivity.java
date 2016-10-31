@@ -25,6 +25,7 @@ import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.skymxc.mybill.adapter.BillTypeAdapter;
 import com.skymxc.mybill.entity.Bill;
@@ -150,9 +151,27 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
                 Log.i(TAG, "onClick: 切换货币类型");
                 changeCurrency();
                 break;
+            case R.id.bill_save:
+                Log.i(TAG, "onClick: 保存");
+                saveBill();
+                break;
 
         }
 
+    }
+
+    /**
+     * 保存 bill
+     */
+    private void saveBill() {
+        getBill();
+        if (bill.getExpense() == 0){
+            Toast.makeText(this, "金额不能为空", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        bill.save();
+        Toast.makeText(this, "保存成功，返回咯", Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     /**
@@ -350,6 +369,10 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
         return true;
     }
 
+    /**
+     * 获取当前bill 对象
+     * @return
+     */
     private Bill getBill() {
         if (bill==null){
           bill = new Bill();
