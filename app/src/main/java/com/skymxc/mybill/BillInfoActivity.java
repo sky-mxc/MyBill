@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -76,6 +77,7 @@ public class BillInfoActivity extends AppCompatActivity implements View.OnClickL
         PayType payType = DBUtil.getPayType(bill.getPayTypeId());
         tvBillPay.setText(payType.getName());
         tvBillNum.setText(bill.getExpense()+"");
+        etRemark.setText(bill.getRemarks());
     }
 
 
@@ -94,10 +96,36 @@ public class BillInfoActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View v) {
+        Log.i(TAG, "onClick: id="+v.getId());
         switch (v.getId()){
             case R.id.bill_remark_camera:
                 break;
+            default:
+                String remark= etRemark.getText().toString();
+                bill.setRemarks(remark);
+                if (from == 10){
+                  //回到 write
+                    returnWrite();
+                }
+                finish();
+                break;
 
         }
+    }
+
+    /**
+     * 回到 write
+     */
+    private void returnWrite() {
+        Intent intent = new Intent(this,WriteBillActivity.class);
+        intent.putExtra("bill",bill);
+        setResult(RESULT_OK,intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        String remark= etRemark.getText().toString();
+        bill.setRemarks(remark);
+        super.onBackPressed();
     }
 }

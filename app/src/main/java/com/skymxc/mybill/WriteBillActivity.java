@@ -2,6 +2,7 @@ package com.skymxc.mybill;
 
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -56,6 +57,7 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
     private boolean point =true;
     private boolean numEnable =true;
     private CurrencyAdapter currencyAdapter;
+    private Bill bill;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -349,7 +351,9 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
     }
 
     private Bill getBill() {
-        Bill  bill = new Bill();
+        if (bill==null){
+          bill = new Bill();
+        }
         //时间
         bill.setTime(((Date)  btBillDate.getTag()).getTime());
         //支付方式
@@ -363,6 +367,7 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
         //账单类型
         BillType billType = (BillType) imgChooseBillType.getTag();
         bill.setBillTypeId(billType.getId());
+
         return  bill;
     }
 
@@ -396,6 +401,18 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
             chooseBillType(billTypes.get(position));
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK  && data != null){
+            switch (requestCode){
+                case REQUET_REMARK:
+                    bill = data.getParcelableExtra("bill");
+                    break;
+            }
+
+        }
+    }
 
     class  PayTypeAdapter extends BaseAdapter{
 
