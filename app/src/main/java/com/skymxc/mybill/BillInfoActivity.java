@@ -99,6 +99,7 @@ public class BillInfoActivity extends AppCompatActivity implements View.OnClickL
         Log.i(TAG, "onClick: id="+v.getId());
         switch (v.getId()){
             case R.id.bill_remark_camera:
+                popChoosePhoto();
                 break;
             default:
                 String remark= etRemark.getText().toString();
@@ -111,6 +112,13 @@ public class BillInfoActivity extends AppCompatActivity implements View.OnClickL
                 break;
 
         }
+    }
+
+    /**
+     * 弹出 选择图片途径
+     */
+    private void popChoosePhoto() {
+        // TODO: 2016/10/31 弹出选择 框 让选择 是从 图库还是 相机
     }
 
     /**

@@ -104,6 +104,7 @@
         android:layout_marginLeft="10dp"
         android:src="@mipmap/ic_local_see_white_24px_copy"
         android:clickable="true"
+        android:onClick="onClick"
         android:background="@drawable/drawable_bt_bg"/>
 
 

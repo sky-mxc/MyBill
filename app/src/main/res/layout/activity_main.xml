@@ -53,7 +53,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="#fff">
 
             <LinearLayout
                 android:id="@+id/date_container"
@@ -165,11 +166,31 @@
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:layout_below="@id/date_container"></android.support.design.widget.TabLayout>
+                android:layout_below="@id/date_container"
+                 app:tabMode="fixed"
+                app:tabGravity="fill"
+                android:background="@color/colorPrimary"
+                app:tabIndicatorColor="#fff"
+                app:tabIndicatorHeight="2dp"
+                app:tabSelectedTextColor="#fff"
+                app:tabTextColor="#fff"></android.support.design.widget.TabLayout>
+
+            <!--
+
+
+
+
+            -->
             <android.support.v4.view.ViewPager
                 android:id="@+id/pager"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"></android.support.v4.view.ViewPager>
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tab_layout"></android.support.v4.view.ViewPager>
+            <!--<FrameLayout-->
+                <!--android:id="@+id/pager"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_below="@id/tab_layout"></FrameLayout>-->
 
 
            <android.support.design.widget.FloatingActionButton

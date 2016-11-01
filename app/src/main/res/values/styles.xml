@@ -39,4 +39,8 @@
     </style>
 
 
+    <style name="tabTitleAppearance">
+        <item name="tabTextColor">#fff</item>
+    </style>
+
 </resources>

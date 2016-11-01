@@ -18,7 +18,9 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.content.PermissionChecker;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SlidingPaneLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -37,11 +39,20 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.skymxc.mybill.adapter.BillListAdapter;
+import com.skymxc.mybill.adapter.PagerAdapter;
+import com.skymxc.mybill.entity.Bill;
+import com.skymxc.mybill.fragment.BillFragment;
+import com.skymxc.mybill.util.DBUtil;
+import com.skymxc.mybill.util.DateUtil;
 import com.skymxc.mybill.util.FileUtil;
 import com.skymxc.mybill.util.ImageViewPlus;
 import com.skymxc.mybill.util.PermissionUtil;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 主窗体
@@ -69,6 +80,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FloatingActionButton fatAddCamera;
     private TextView yearTv;
     private TextView monthTv;
+    private TabLayout tabLayout;
+    private ViewPager pager;
+    private List<Bill> bills;
+    private BillListAdapter billListAdapter;
+    private List<BillFragment> billFragments;
+    private PagerAdapter pagerAdapert;
+
 
 
     @Override
@@ -106,17 +124,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         slidingPane.setPanelSlideListener(slidLis);
 
         yearTv = (TextView) findViewById(R.id.date_year);
+        yearTv.setText(DateUtil.getCurrentYear()+"年");
         monthTv = (TextView) findViewById(R.id.date_month);
+        monthTv.setText(DateUtil.getCurrentMonth()+"月");
+        pager = (ViewPager) findViewById(R.id.pager);
+        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.addTab(tabLayout.newTab().setText("消费明细"));
+        tabLayout.addTab(tabLayout.newTab().setText("分类报表"));
+        tabLayout.addTab(tabLayout.newTab().setText("账户统计"));
+        tabLayout.addOnTabSelectedListener(onTabSelectedListener);
+        pager.addOnPageChangeListener(onPageChangeLis);
+        initFragment();
+
+    }
+
+    /**
+     * 初始化Fragment 数据
+     */
+    private void initFragment() {
+        billFragments = new ArrayList<>();
+        //账单列表
+        bills = DBUtil.getBills(new Date());
+        billListAdapter = new BillListAdapter(this, bills);
+        BillFragment billListFragment = BillFragment.getInstance(billListAdapter,onBillItemClickLis);
+        billFragments.add(billListFragment);
+        billFragments.add( BillFragment.getInstance(billListAdapter,onBillItemClickLis));
+        billFragments.add( BillFragment.getInstance(billListAdapter,onBillItemClickLis));
+        pagerAdapert = new PagerAdapter(getSupportFragmentManager(),billFragments);
+        pager.setAdapter(pagerAdapert);
 
     }
 
     @Override
     public void onClick(View v) {
-//        boolean isPop = (fatAdd.getTag(R.id.key_is_pop)==null)?false: (boolean) fatAdd.getTag(R.id.key_is_pop);
-//        if (isPop){
-//            dismissPop(fatAdd);
-//
-//        }
         Log.i(TAG, "onClick: ");
         switch (v.getId()){
             case R.id.head_image:
@@ -191,14 +231,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        final int day = calendar.get(Calendar.DAY_OF_MONTH);
         DatePickerDialog dateDialog = new DatePickerDialog(this,R.style.DateDialog, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                Log.i(TAG, "onDateSet: year="+year+";month="+month);
+                Log.i(TAG, "onDateSet: year="+year+";month="+(month+1));
                 yearTv.setText(year+"");
-                monthTv.setText(month+"月");
-                // TODO: 2016/10/29 根据日期更新 数据 
+                monthTv.setText((month+1)+"月");
+                bills.clear();
+                bills.addAll(DBUtil.getBills(DateUtil.getDate(year+"/"+(month+1)+"/"+dayOfMonth)));
+                billListAdapter.notifyDataSetChanged();
             }
         },year,month,day);
 
@@ -431,6 +473,56 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
             }
             return true;
+        }
+    };
+
+    //选项卡 改变监听
+    private  TabLayout.OnTabSelectedListener onTabSelectedListener= new TabLayout.OnTabSelectedListener() {
+        @Override
+        public void onTabSelected(TabLayout.Tab tab) {
+            Log.i(TAG, "onTabSelected: SelectedTabPosition="+tab.getPosition());
+            pager.setCurrentItem(tab.getPosition());
+        }
+
+        @Override
+        public void onTabUnselected(TabLayout.Tab tab) {
+
+        }
+
+        @Override
+        public void onTabReselected(TabLayout.Tab tab) {
+
+        }
+    };
+    //viewpager 滑动监听
+    private ViewPager.OnPageChangeListener onPageChangeLis= new ViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            Log.i(TAG, "onPageSelected: position="+position);
+            tabLayout.getTabAt(position).select();
+            if (position==0){
+                slidingPane.setEnabled(true);
+            }else{
+                slidingPane.setEnabled(false);
+            }
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
+    };
+
+    //账单被点击事件
+    private BillFragment.OnItemClickListener onBillItemClickLis = new BillFragment.OnItemClickListener() {
+        @Override
+        public void onItemClickListener(int position, long id) {
+            Log.i(TAG, "onItemClickListener: id="+id);
         }
     };
 

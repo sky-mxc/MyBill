@@ -6,12 +6,14 @@ import android.util.Log;
 import com.activeandroid.Model;
 import com.activeandroid.query.Select;
 import com.alibaba.fastjson.JSON;
+import com.skymxc.mybill.entity.Bill;
 import com.skymxc.mybill.entity.BillType;
 import com.skymxc.mybill.entity.CurrencyType;
 import com.skymxc.mybill.entity.PayType;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -103,5 +105,42 @@ public class DBUtil {
      */
     public static PayType getPayType(long payTypeId) {
         return  PayType.load(PayType.class,payTypeId);
+    }
+
+
+    /**
+     * 查询日期中月份的账单
+     * @param date yyyy/MM/dd
+     * @return
+     */
+    public static List<Bill> getBills(Date date){
+        Date maxDate = DateUtil.getLastDayOfMonth(date);
+        Date minDate = DateUtil.getFirstDayOfMonth(date);
+        Log.i(TAG, "getBills: max="+DateUtil.getDateString(maxDate.getTime())+";       min="+DateUtil.getDateString(minDate.getTime())+";date="+DateUtil.getDateString(date.getTime()));
+        return  new Select().from(Bill.class).where("time >=? and time <?",minDate.getTime(),maxDate.getTime()).execute();
+    }
+
+    /**
+     * 获取 一天的 收支情况
+     * @param date 日期 具体到哪一天
+     * @return 收支情况
+     */
+    public  static double getSumDay(Date date){
+        long min = DateUtil.getFirstHourOfDay(date);
+        long max = DateUtil.getLastHourOfDay(date);
+        Log.i(TAG, "getSumDay: minHour="+min+";   maxHour="+max);
+        List<Bill> bills = new Select().from(Bill.class).where("time >= ? and time <= ?",min,max).execute();
+        Log.i(TAG, "getSumDay: size="+bills.size());
+        double sum  =0.00;
+        for (Bill bill :bills){
+            if (DBUtil.getBillType(bill.getBillTypeId()).getType()==0){
+                //支出
+                sum-=bill.getExpense();
+            }else{
+                //收入
+                sum+=bill.getExpense();
+            }
+        }
+        return  sum;
     }
 }

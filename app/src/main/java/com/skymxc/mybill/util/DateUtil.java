@@ -27,7 +27,7 @@ public class DateUtil {
      * @return
      */
     public static int getCurrentMonth(){
-        return calendar.get(Calendar.MONTH);
+        return calendar.get(Calendar.MONTH)+1;
     }
 
     /**
@@ -65,11 +65,11 @@ public class DateUtil {
 
     /**
      * 将字符串格式化为
-     * @param dateStr
+     * @param dateStr 格式为 yyyy/MM/dd E
      * @return
      */
     public static Date getDateFormart(String dateStr){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd E");
         Date date =null;
         try {
              date= sdf.parse(dateStr);
@@ -89,4 +89,76 @@ public class DateUtil {
         Date date = new Date(time);
         return  getStringFormart(date);
     }
+
+    /**
+     * 转换为 Date 格式
+     * @param dateStr  yyyy/MM/dd
+     * @return
+     */
+    public static Date getDate(String dateStr){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        try {
+            return  sdf.parse(dateStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 返回传入月份对应的最后一天的日期
+     * @param date
+     * @return yyyy/MM/dd 格式的Date对象
+     */
+    public static  Date getLastDayOfMonth(Date date){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MONTH,1);
+        //设置 天数 1
+        calendar.set(Calendar.DAY_OF_MONTH,calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+        Log.i(TAG, "getLastDayOfMonth: month="+calendar.get(Calendar.MONTH)+";day="+calendar.get(Calendar.DAY_OF_MONTH));
+        return  calendar.getTime();
+    }
+
+    /**
+     * 返回传入月份的 第一天 的日期
+     * @param date
+     * @return yyyy/MM/01
+     */
+    public static Date getFirstDayOfMonth(Date date){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        //设置 天数为月份的第一天
+        calendar.set(Calendar.DAY_OF_MONTH,1);
+        Log.i(TAG, "getFirstDayOfMonth: month="+calendar.get(Calendar.MONTH)+";day="+calendar.get(Calendar.DAY_OF_MONTH));
+        return  calendar.getTime();
+    }
+
+    /**
+     * 获取 日期当天0点 long
+     * @param date
+     * @return
+     */
+    public  static long getFirstHourOfDay(Date date){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY,calendar.getActualMinimum(Calendar.HOUR_OF_DAY));
+        return  calendar.getTime().getTime();
+    }
+    /**
+     * 获取 第二天 0点  long
+     * @param date
+     * @return
+     */
+    public  static long getLastHourOfDay(Date date){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.DAY_OF_MONTH,(calendar.get(Calendar.DAY_OF_MONTH)+1));
+        calendar.set(Calendar.HOUR_OF_DAY,0);
+        return  calendar.getTime().getTime();
+    }
+
+
+
+
 }
