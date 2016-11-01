@@ -171,6 +171,7 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
         }
         bill.save();
         Toast.makeText(this, "保存成功，返回咯", Toast.LENGTH_SHORT).show();
+       setResult(RESULT_OK);
         finish();
     }
 
@@ -208,8 +209,9 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 String chooseDate = year+"/"+(month+1)+"/"+dayOfMonth;
                 Log.i(TAG, "onDateSet:chooseDate="+chooseDate);
-               Date date = DateUtil.getDateFormart(chooseDate);
+               Date date = DateUtil.getDate(chooseDate);
                 btBillDate.setTag(date);
+                Log.i(TAG, "onDateSet: date="+date);
                 btBillDate.setText(DateUtil.getStringFormart(date));
 
             }

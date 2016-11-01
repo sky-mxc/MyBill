@@ -27,6 +27,7 @@ public class DateUtil {
      * @return
      */
     public static int getCurrentMonth(){
+        Log.i(TAG, "getCurrentMonth: "+(calendar.get(Calendar.MONTH)+1));
         return calendar.get(Calendar.MONTH)+1;
     }
 
@@ -39,8 +40,12 @@ public class DateUtil {
     }
 
 
-
-
+    public static Date getCurrentDate(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MONTH,(calendar.get(Calendar.MONTH)+1));
+        Log.i(TAG, "getCurrentDate: month="+calendar.get(Calendar.MONTH));
+        return getDate(calendar.get(Calendar.YEAR)+"/"+calendar.get(Calendar.MONTH)+"/"+calendar.get(Calendar.DAY_OF_MONTH));
+    }
     /**
      * 获取日期格式  yyyy/MM/dd E
      * @return
@@ -116,7 +121,6 @@ public class DateUtil {
         calendar.add(Calendar.MONTH,1);
         //设置 天数 1
         calendar.set(Calendar.DAY_OF_MONTH,calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
-        Log.i(TAG, "getLastDayOfMonth: month="+calendar.get(Calendar.MONTH)+";day="+calendar.get(Calendar.DAY_OF_MONTH));
         return  calendar.getTime();
     }
 
@@ -130,7 +134,6 @@ public class DateUtil {
         calendar.setTime(date);
         //设置 天数为月份的第一天
         calendar.set(Calendar.DAY_OF_MONTH,1);
-        Log.i(TAG, "getFirstDayOfMonth: month="+calendar.get(Calendar.MONTH)+";day="+calendar.get(Calendar.DAY_OF_MONTH));
         return  calendar.getTime();
     }
 
@@ -159,6 +162,20 @@ public class DateUtil {
     }
 
 
-
-
+    /**
+     * 比较 连个日期是否在同一天
+     * @param beforeTime
+     * @param behindTime
+     * @return true ：在同一天；false ：不在同一天
+     */
+    public static boolean compareInDay(long beforeTime, long behindTime) {
+        Calendar beforeCalendar = Calendar.getInstance();
+        beforeCalendar.setTimeInMillis(beforeTime);
+        Calendar behindCalendar = Calendar.getInstance();
+        behindCalendar.setTimeInMillis(behindTime);
+      boolean isInDay=  beforeCalendar.get(Calendar.YEAR) == behindCalendar.get(Calendar.YEAR)      //同一年
+                && beforeCalendar.get(Calendar.MONTH) == behindCalendar.get(Calendar.MONTH)         //同一月
+                && beforeCalendar.get(Calendar.DAY_OF_MONTH) == behindCalendar.get(Calendar.DAY_OF_MONTH);  //同一天
+        return  isInDay;
+    }
 }

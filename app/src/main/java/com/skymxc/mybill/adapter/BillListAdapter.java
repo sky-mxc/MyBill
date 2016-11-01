@@ -1,6 +1,7 @@
 package com.skymxc.mybill.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.skymxc.mybill.entity.BillType;
 import com.skymxc.mybill.util.DBUtil;
 import com.skymxc.mybill.util.DateUtil;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -48,6 +50,7 @@ public class BillListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        Log.i(TAG, "getView: ");
         BillViewHolder holder ;
         if (convertView == null){
             convertView = lif.inflate(R.layout.layout_bill_list_item,null);
@@ -57,17 +60,32 @@ public class BillListAdapter extends BaseAdapter {
             holder = (BillViewHolder) convertView.getTag();
         }
         Bill bill = bills.get(position);
-
         BillType billType = DBUtil.getBillType(bill.getBillTypeId());
         holder.imgBillTypeIcon.setImageResource(mContext.getResources().getIdentifier(billType.getIcon(),"mipmap",mContext.getPackageName()));
-        holder.tvDate.setText(DateUtil.getDateString(bill.getTime()));
         holder.tvBillTypeName.setText(billType.getName());
+        //根据 账单类型设置 是 收入还是支出
         if (billType.getType() ==0){
             holder.tvBillNum.setText("-"+bill.getExpense());
-            holder.tvRightNum.setText("-"+bill.getExpense()+"");
         }else{
-            holder.tvRightNum.setText("-"+bill.getExpense()+"");
             holder.tvBillNum.setText("+"+bill.getExpense());
+        }
+        //设置日期
+        holder.tvDate.setText(DateUtil.getDateString(bill.getTime()));
+        //查出 这天的消费
+        double sum = DBUtil.getSumDay(new Date(bill.getTime()));
+        holder.tvRightNum.setText(sum>0?"+"+sum:"-"+sum);
+        Log.i(TAG, "getView: date="+DateUtil.getDateString(bill.getTime())+";sum="+DBUtil.getSumDay(new Date(bill.getTime())));
+        if(position!=0){    //不是第一个
+            Bill beforeBill = bills.get(position-1);
+            if (!DateUtil.compareInDay(beforeBill.getTime(),bill.getTime())){
+                //不在同一天
+                holder.tvDate.setVisibility(View.VISIBLE);
+                holder.tvRightNum.setVisibility(View.VISIBLE);
+            }else{
+                //在同一天
+                holder.tvDate.setVisibility(View.GONE);
+                holder.tvRightNum.setVisibility(View.GONE);
+            }
         }
 
         return convertView;

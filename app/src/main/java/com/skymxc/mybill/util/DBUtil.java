@@ -76,7 +76,6 @@ public class DBUtil {
      * @return
      */
     public static List<BillType> getBillTypes(int type){
-        Log.i(TAG, "getBillTypes: type="+type);
         return  new Select().from(BillType.class).where("type =?",type).execute();
     }
 
@@ -116,8 +115,8 @@ public class DBUtil {
     public static List<Bill> getBills(Date date){
         Date maxDate = DateUtil.getLastDayOfMonth(date);
         Date minDate = DateUtil.getFirstDayOfMonth(date);
-        Log.i(TAG, "getBills: max="+DateUtil.getDateString(maxDate.getTime())+";       min="+DateUtil.getDateString(minDate.getTime())+";date="+DateUtil.getDateString(date.getTime()));
-        return  new Select().from(Bill.class).where("time >=? and time <?",minDate.getTime(),maxDate.getTime()).execute();
+        Log.i(TAG, "getBills: mindate="+minDate.getMonth()+"maxdate="+maxDate.getMonth());
+        return  new Select().from(Bill.class).where("time >=? and time <?",minDate.getTime(),maxDate.getTime()).orderBy("time").execute();
     }
 
     /**
@@ -128,9 +127,7 @@ public class DBUtil {
     public  static double getSumDay(Date date){
         long min = DateUtil.getFirstHourOfDay(date);
         long max = DateUtil.getLastHourOfDay(date);
-        Log.i(TAG, "getSumDay: minHour="+min+";   maxHour="+max);
         List<Bill> bills = new Select().from(Bill.class).where("time >= ? and time <= ?",min,max).execute();
-        Log.i(TAG, "getSumDay: size="+bills.size());
         double sum  =0.00;
         for (Bill bill :bills){
             if (DBUtil.getBillType(bill.getBillTypeId()).getType()==0){

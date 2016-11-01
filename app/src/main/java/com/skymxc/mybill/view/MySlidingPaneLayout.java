@@ -10,7 +10,6 @@ import android.view.MotionEvent;
  * Created by sky-mxc
  */
 public class MySlidingPaneLayout extends SlidingPaneLayout {
-    private static final String TAG = "MySlidingPaneLayout";
 
     //滑动是否可用 m默认是可用的
     private boolean slidEnable =true ;
@@ -31,16 +30,14 @@ public class MySlidingPaneLayout extends SlidingPaneLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        Log.i(TAG, "onInterceptTouchEvent: ");
         switch (ev.getAction()){
             case MotionEvent.ACTION_MOVE:
                 if (!slidEnable) {
-                    Log.i(TAG, "onInterceptTouchEvent: 拦截");
+                    Log.i("MySlidingPaneLayout", "onInterceptTouchEvent: 拦截");
                     return false;
                 }
                 break;
         }
-        Log.i(TAG, "onInterceptTouchEvent: 不拦截");
         return super.onInterceptTouchEvent(ev);
     }
 
@@ -50,6 +47,5 @@ public class MySlidingPaneLayout extends SlidingPaneLayout {
      */
     public void setSlidEnable(boolean slidEnable) {
         this.slidEnable = slidEnable;
-        Log.i(TAG, "setSlidEnable: 设置滑动 可用否"+slidEnable);
     }
 }

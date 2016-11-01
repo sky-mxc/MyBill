@@ -42,6 +42,7 @@ import android.widget.Toast;
 import com.skymxc.mybill.adapter.BillListAdapter;
 import com.skymxc.mybill.adapter.PagerAdapter;
 import com.skymxc.mybill.entity.Bill;
+import com.skymxc.mybill.entity.BillType;
 import com.skymxc.mybill.fragment.BillFragment;
 import com.skymxc.mybill.util.DBUtil;
 import com.skymxc.mybill.util.DateUtil;
@@ -52,7 +53,6 @@ import com.skymxc.mybill.view.MySlidingPaneLayout;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private BillListAdapter billListAdapter;
     private List<BillFragment> billFragments;
     private PagerAdapter pagerAdapert;
+    private TextView tvExpenditureNumPay;
+    private TextView tvIncomeNum;
 
 
 
@@ -95,7 +97,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
-//        slidingPane.setEnabled(false);
     }
 
 
@@ -138,6 +139,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         pager.addOnPageChangeListener(onPageChangeLis);
         initFragment();
 
+        //本月支出和结余
+        tvExpenditureNumPay = (TextView) findViewById(R.id.expenditure_num);
+        tvIncomeNum = (TextView) findViewById(R.id.income_num);
+        calcMonthNum();
+
+
+    }
+
+    /**
+     * 计算并显示当月的结余和支出
+     */
+    private void calcMonthNum() {
+        //支出
+        double expenditureNum =0.00;
+        //结余
+        double incomeNum =0.00;
+        Log.i(TAG, "calcMonthNum: incomeNum="+incomeNum+"expaenditureNum="+expenditureNum);
+        for (Bill bill:bills){
+            BillType type = DBUtil.getBillType(bill.getBillTypeId());
+            if (type.getType()==0){
+                expenditureNum+=bill.getExpense();
+            }else{
+                incomeNum+=bill.getExpense();
+            }
+        }
+        Log.i(TAG, "calcMonthNum: incomeNum="+incomeNum+"expaenditureNum="+expenditureNum);
+        tvExpenditureNumPay.setText(""+expenditureNum);
+        tvIncomeNum.setText(""+incomeNum);
     }
 
     /**
@@ -146,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initFragment() {
         billFragments = new ArrayList<>();
         //账单列表
-        bills = DBUtil.getBills(new Date());
+        bills = DBUtil.getBills(DateUtil.getCurrentDate());
         billListAdapter = new BillListAdapter(this, bills);
         BillFragment billListFragment = BillFragment.getInstance(billListAdapter,onBillItemClickLis);
         billFragments.add(billListFragment);
@@ -154,6 +183,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         billFragments.add( BillFragment.getInstance(billListAdapter,onBillItemClickLis));
         pagerAdapert = new PagerAdapter(getSupportFragmentManager(),billFragments);
         pager.setAdapter(pagerAdapert);
+
+    }
+
+
+
+
+    /**
+     * 刷新 账单列表
+     */
+    private void flushBillList(){
+        bills.clear();
+        bills.addAll(DBUtil.getBills(DateUtil.getCurrentDate()));
+        Log.i(TAG, "flushBillList: size="+bills.size());
+        billListAdapter.notifyDataSetChanged();
 
     }
 
@@ -241,7 +284,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 yearTv.setText(year+"");
                 monthTv.setText((month+1)+"月");
                 bills.clear();
-                bills.addAll(DBUtil.getBills(DateUtil.getDate(year+"/"+(month+1)+"/"+dayOfMonth)));
+                bills.addAll(DBUtil.getBills(DateUtil.getDate(year+"/"+(month+1)+"/"+dayOfMonth)));//
+                Log.i(TAG, "onDateSet: size="+bills.size());
                 billListAdapter.notifyDataSetChanged();
             }
         },year,month,day);
@@ -546,25 +590,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK && data != null){
+        if (resultCode == RESULT_OK ){
          switch (requestCode){
              case CAMERA:
                  //调用裁剪功能
+                 if (data != null)
                  startPhotoZoom(Uri.fromFile(FileUtil.getHeadImage()));
                  break;
              case ZOOM:
-                 Bitmap bmp = data.getParcelableExtra("data");
-                 headImg.setImageBitmap(bmp);
+                 if (data != null) {
+                     Bitmap bmp = data.getParcelableExtra("data");
+                     headImg.setImageBitmap(bmp);
+                 }
                  break;
              case PHOTO:
-                 String projection=MediaStore.Images.Media.DATA;
-              Cursor cursor= getContentResolver().query(data.getData(),new String[]{ projection},null,null,null);
-                 if (cursor!=null && cursor.moveToFirst()){
-                     String path = cursor.getString(cursor.getColumnIndex(projection));
-                     Log.i(TAG, "onActivityResult: photoPath="+path);
-                     startPhotoZoom(Uri.fromFile(FileUtil.saveHeadImg(path)));
+                 if (data!=null) {
+                     String projection = MediaStore.Images.Media.DATA;
+                     Cursor cursor = getContentResolver().query(data.getData(), new String[]{projection}, null, null, null);
+                     if (cursor != null && cursor.moveToFirst()) {
+                         String path = cursor.getString(cursor.getColumnIndex(projection));
+                         Log.i(TAG, "onActivityResult: photoPath=" + path);
+                         startPhotoZoom(Uri.fromFile(FileUtil.saveHeadImg(path)));
+                     }
+                     cursor.close();
                  }
-                 cursor.close();
+                 break;
+             case REQUEST_WRITE_BILL_PEN:
+                 flushBillList();
+                 calcMonthNum();
                  break;
          }
         }
