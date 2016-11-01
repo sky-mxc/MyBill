@@ -38,7 +38,7 @@
         </LinearLayout>
     </android.support.v7.widget.Toolbar>
 
-    <android.support.v4.widget.SlidingPaneLayout
+    <com.skymxc.mybill.view.MySlidingPaneLayout
         android:layout_marginTop="?attr/actionBarSize"
         android:id="@+id/sliding"
         android:layout_width="match_parent"
@@ -224,5 +224,5 @@
 
         </RelativeLayout>
 
-    </android.support.v4.widget.SlidingPaneLayout>
+    </com.skymxc.mybill.view.MySlidingPaneLayout>
 </RelativeLayout>

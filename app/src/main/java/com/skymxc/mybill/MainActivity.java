@@ -48,6 +48,7 @@ import com.skymxc.mybill.util.DateUtil;
 import com.skymxc.mybill.util.FileUtil;
 import com.skymxc.mybill.util.ImageViewPlus;
 import com.skymxc.mybill.util.PermissionUtil;
+import com.skymxc.mybill.view.MySlidingPaneLayout;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int ZOOM = 4;
     private static final int REQUEST_WRITE_BILL_PEN = 10;
 
-    private SlidingPaneLayout slidingPane;
+    private MySlidingPaneLayout slidingPane;
     private Toolbar toolbar;
     private NavigationView navigation;
     private ImageViewPlus headImg;
@@ -94,11 +95,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+//        slidingPane.setEnabled(false);
     }
 
 
     private void initView() {
-        slidingPane = (SlidingPaneLayout) findViewById(R.id.sliding);
+        slidingPane = (MySlidingPaneLayout) findViewById(R.id.sliding);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         navigationTxt = (TextView) findViewById(R.id.navigation_text);
         navigationIco = (ImageView) findViewById(R.id.navigation_ico);
@@ -424,7 +426,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SlidingPaneLayout.PanelSlideListener slidLis =new SlidingPaneLayout.PanelSlideListener() {
         @Override
         public void onPanelSlide(View panel, float slideOffset) {
-            Log.i(TAG, "onPanelSlide: offset="+slideOffset*90);
+//            Log.i(TAG, "onPanelSlide: offset="+slideOffset*90);
             RotateAnimation rotateAnimation = new RotateAnimation(0,slideOffset*90, Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
             rotateAnimation.setDuration(100);
             rotateAnimation.setFillAfter(true);
@@ -503,12 +505,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onPageSelected(int position) {
-            Log.i(TAG, "onPageSelected: position="+position);
+            Log.i(TAG, "onPageSelected: position=" + position);
             tabLayout.getTabAt(position).select();
-            if (position==0){
-                slidingPane.setEnabled(true);
-            }else{
-                slidingPane.setEnabled(false);
+            if (position == 0) {
+                slidingPane.setSlidEnable(true);
+            } else {
+                slidingPane.setSlidEnable(false);
             }
         }
 
@@ -516,6 +518,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void onPageScrollStateChanged(int state) {
 
         }
+
     };
 
     //账单被点击事件
