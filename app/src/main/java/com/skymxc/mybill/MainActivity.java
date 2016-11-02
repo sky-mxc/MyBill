@@ -41,6 +41,7 @@ import android.widget.Toast;
 
 import com.skymxc.mybill.adapter.BillListAdapter;
 import com.skymxc.mybill.adapter.PagerAdapter;
+import com.skymxc.mybill.adapter.ReportAdpater;
 import com.skymxc.mybill.entity.Bill;
 import com.skymxc.mybill.entity.BillType;
 import com.skymxc.mybill.fragment.BillFragment;
@@ -49,10 +50,12 @@ import com.skymxc.mybill.util.DateUtil;
 import com.skymxc.mybill.util.FileUtil;
 import com.skymxc.mybill.util.ImageViewPlus;
 import com.skymxc.mybill.util.PermissionUtil;
+import com.skymxc.mybill.view.Item;
 import com.skymxc.mybill.view.MySlidingPaneLayout;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -89,6 +92,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private PagerAdapter pagerAdapert;
     private TextView tvExpenditureNumPay;
     private TextView tvIncomeNum;
+    private ReportAdpater reportAdpter;
+    private List<Item> reportItems;
+    private List<Item> payItems;
+    private ReportAdpater payAdapter;
 
 
 
@@ -129,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         yearTv = (TextView) findViewById(R.id.date_year);
         yearTv.setText(DateUtil.getCurrentYear()+"年");
         monthTv = (TextView) findViewById(R.id.date_month);
-        monthTv.setText(DateUtil.getCurrentMonth()+"月");
+        monthTv.setText((DateUtil.getCurrentMonth()+1)+"月");
         pager = (ViewPager) findViewById(R.id.pager);
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("消费明细"));
@@ -179,8 +186,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         billListAdapter = new BillListAdapter(this, bills);
         BillFragment billListFragment = BillFragment.getInstance(billListAdapter,onBillItemClickLis);
         billFragments.add(billListFragment);
-        billFragments.add( BillFragment.getInstance(billListAdapter,onBillItemClickLis));
-        billFragments.add( BillFragment.getInstance(billListAdapter,onBillItemClickLis));
+        //报告列表
+        reportItems = DBUtil.getBillsSport(DateUtil.getCurrentDate());
+        reportAdpter = new ReportAdpater(this,reportItems);
+        BillFragment reportListFragment = BillFragment.getInstance(reportAdpter,onReportItemClickLis);
+        billFragments.add(reportListFragment);
+        //账户统计
+        payItems = DBUtil.getPayTypeItems(DateUtil.getCurrentDate());
+        payAdapter = new ReportAdpater(this,payItems);
+        BillFragment payFragment = BillFragment.getInstance(payAdapter,null);
+        billFragments.add( payFragment);
         pagerAdapert = new PagerAdapter(getSupportFragmentManager(),billFragments);
         pager.setAdapter(pagerAdapert);
 
@@ -192,12 +207,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * 刷新 账单列表
      */
-    private void flushBillList(){
+    private void flushFragmentList(Date date){
+        //账单
         bills.clear();
-        bills.addAll(DBUtil.getBills(DateUtil.getCurrentDate()));
-        Log.i(TAG, "flushBillList: size="+bills.size());
+        bills.addAll(DBUtil.getBills(date));
         billListAdapter.notifyDataSetChanged();
-
+        //分类报表
+        reportItems.clear();
+        reportItems.addAll(DBUtil.getBillsSport(date));
+        reportAdpter.notifyDataSetChanged();
+        //账户统计
+        payItems.clear();
+        payItems.addAll(DBUtil.getPayTypeItems(date));
+        payAdapter.notifyDataSetChanged();
+        calcMonthNum();
     }
 
     @Override
@@ -280,13 +303,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         DatePickerDialog dateDialog = new DatePickerDialog(this,R.style.DateDialog, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                Log.i(TAG, "onDateSet: year="+year+";month="+(month+1));
                 yearTv.setText(year+"");
                 monthTv.setText((month+1)+"月");
-                bills.clear();
-                bills.addAll(DBUtil.getBills(DateUtil.getDate(year+"/"+(month+1)+"/"+dayOfMonth)));//
-                Log.i(TAG, "onDateSet: size="+bills.size());
-                billListAdapter.notifyDataSetChanged();
+
+                flushFragmentList(DateUtil.getDate(year+"/"+(month+1)+"/"+dayOfMonth));
             }
         },year,month,day);
 
@@ -573,6 +593,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
+    //报告被点击事件
+    private BillFragment.OnItemClickListener onReportItemClickLis  = new BillFragment.OnItemClickListener() {
+        @Override
+        public void onItemClickListener(int position, long id) {
+            Log.i(TAG, "onItemClickListener: position="+position);
+        }
+    };
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
@@ -616,10 +644,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                  }
                  break;
              case REQUEST_WRITE_BILL_PEN:
-                 flushBillList();
-                 calcMonthNum();
+                 flushFragmentList(DateUtil.getCurrentDate());
                  break;
          }
+        }else if (resultCode == RESULT_CANCELED && requestCode ==REQUEST_WRITE_BILL_PEN){
+            flushFragmentList(DateUtil.getCurrentDate());
         }
     }
 

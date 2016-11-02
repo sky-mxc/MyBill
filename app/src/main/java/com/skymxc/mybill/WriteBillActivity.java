@@ -71,7 +71,8 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         btPayType = (Button) findViewById(R.id.pay_type);
-        payTypes = DBUtil.getPayTypes();
+        payTypes = DBUtil.getPayTypes(0);
+        Log.i(TAG, "initView:  p size="+payTypes.size());
         //默认 支付方式
         btPayType.setText(payTypes.get(0).getName());
         btPayType.setTag(payTypes.get(0));
@@ -146,6 +147,7 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
                 break;
             case R.id.close_write_bill:
                 setResult(RESULT_CANCELED);
+                finish();
                 break;
             case R.id.currency_type:
                 Log.i(TAG, "onClick: 切换货币类型");
@@ -155,6 +157,7 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
                 Log.i(TAG, "onClick: 保存");
                 saveBill();
                 break;
+
 
         }
 
@@ -233,12 +236,21 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
                 tvBillType.setText(item.getTitle());
                 switch (item.getItemId()){
                     case R.id.bill_income:
+//                        btPayType.setVisibility(View.GONE);
                         tvBillType.setTag(1);
+                        payTypes = DBUtil.getPayTypes(1);
+
+                        btPayType.setText(payTypes.get(0).getName());
+                        btPayType.setTag(payTypes.get(0));
                         break;
                     case R.id.bill_pay:
                         tvBillType.setTag(0);
+                        payTypes = DBUtil.getPayTypes(0);
+                        btPayType.setText(payTypes.get(0).getName());
+                        btPayType.setTag(payTypes.get(0));
                         break;
                 }
+                Log.i(TAG, "onMenuItemClick: p size ="+payTypes.size());
                 changeBillTypeData();
                 return true;
             }

@@ -4,10 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.LinearLayout;
 
 import com.skymxc.mybill.util.DBUtil;
+import com.skymxc.mybill.util.DateUtil;
 import com.skymxc.mybill.util.SDFUtil;
 
 /**
@@ -41,7 +41,6 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void toMain(){
-        Log.i("WelcomeActivity", "toMain: ");
         if (ok){
             Intent intent = new Intent(WelcomeActivity.this,MainActivity.class);
             startActivity(intent);

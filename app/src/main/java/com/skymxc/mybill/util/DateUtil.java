@@ -27,8 +27,7 @@ public class DateUtil {
      * @return
      */
     public static int getCurrentMonth(){
-        Log.i(TAG, "getCurrentMonth: "+(calendar.get(Calendar.MONTH)+1));
-        return calendar.get(Calendar.MONTH)+1;
+        return calendar.get(Calendar.MONTH);
     }
 
     /**

@@ -1,7 +1,6 @@
 package com.skymxc.mybill.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +49,6 @@ public class BillListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.i(TAG, "getView: ");
         BillViewHolder holder ;
         if (convertView == null){
             convertView = lif.inflate(R.layout.layout_bill_list_item,null);
@@ -74,7 +72,6 @@ public class BillListAdapter extends BaseAdapter {
         //查出 这天的消费
         double sum = DBUtil.getSumDay(new Date(bill.getTime()));
         holder.tvRightNum.setText(sum>0?"+"+sum:"-"+sum);
-        Log.i(TAG, "getView: date="+DateUtil.getDateString(bill.getTime())+";sum="+DBUtil.getSumDay(new Date(bill.getTime())));
         if(position!=0){    //不是第一个
             Bill beforeBill = bills.get(position-1);
             if (!DateUtil.compareInDay(beforeBill.getTime(),bill.getTime())){
