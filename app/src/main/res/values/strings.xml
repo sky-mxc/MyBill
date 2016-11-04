@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">MyBill</string>
+    <string name="app_name">记账</string>
     <string name="is_first_key">key_is_first</string>
 </resources>
