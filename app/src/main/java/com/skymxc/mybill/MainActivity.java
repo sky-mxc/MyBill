@@ -343,9 +343,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         v.startAnimation(rotate);
 
         //记账的两个途径 弹出动画
-        PropertyValuesHolder translateXHolder = PropertyValuesHolder.ofFloat("translateX",-75f);
-        PropertyValuesHolder translateYHolder = PropertyValuesHolder.ofFloat("translateY",-35f);
-        PropertyValuesHolder translateYHolderC = PropertyValuesHolder.ofFloat("translateYC",-75f);
+        PropertyValuesHolder translateXHolder = PropertyValuesHolder.ofFloat("translateX",-205f);
+        PropertyValuesHolder translateYHolder = PropertyValuesHolder.ofFloat("translateY",-95f);
+        PropertyValuesHolder translateYHolderC = PropertyValuesHolder.ofFloat("translateYC",-185f);
         PropertyValuesHolder rotateHolder = PropertyValuesHolder.ofFloat("rotate",-350,0);
 
         ValueAnimator moveShow = ValueAnimator.ofPropertyValuesHolder(translateXHolder,translateYHolder,rotateHolder,translateYHolderC);
@@ -374,6 +374,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * 图库选取图片权限请求
      */
     private void callPhoto() {
+
         invokePhoto();
     }
 
@@ -384,7 +385,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.i(TAG, "invokePhoto: ");
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,"image/*");
-
         startActivityForResult(intent,PHOTO);
 
     }
@@ -590,6 +590,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onItemClickListener(int position, long id) {
             Log.i(TAG, "onItemClickListener: id="+id);
+
         }
     };
 
@@ -622,7 +623,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
          switch (requestCode){
              case CAMERA:
                  //调用裁剪功能
-                 if (data != null)
+                 Log.i(TAG, "onActivityResult: data="+data);
+//                 if (data != null)
                  startPhotoZoom(Uri.fromFile(FileUtil.getHeadImage()));
                  break;
              case ZOOM:
