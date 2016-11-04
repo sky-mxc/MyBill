@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -86,16 +87,27 @@ public class WriteBillActivity extends AppCompatActivity implements View.OnClick
         tvBillType.setTag(0);
         rvBillType = (RecyclerView) findViewById(R.id.recycler_bill_type);
 
-        int rvHeight = rvBillType.getMeasuredHeight();
-        int itemHeight = getResources().getDimensionPixelOffset(R.dimen.bill_type_icon_height);
-        int spanCount = rvHeight % itemHeight ==0 ? rvHeight/itemHeight:rvHeight/itemHeight+1;
-        Log.i(TAG, "initView: rvHeight="+rvHeight+";itemHeight="+itemHeight+";spanCount="+spanCount);
-        GridLayoutManager glm = new GridLayoutManager(this,4,GridLayoutManager.HORIZONTAL,false);
-        rvBillType.setLayoutManager(glm);
+        rvBillType.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Log.i(TAG, "onGlobalLayout: height="+rvBillType.getHeight());
+                int rvHeight =rvBillType.getHeight();
+                Log.i(TAG, "onGlobalLayout: textheight="+getResources().getDimensionPixelSize(R.dimen.bill_type_name_height));
+                int itemHeight = getResources().getDimensionPixelSize(R.dimen.bill_type_icon_height)+getResources().getDimensionPixelSize(R.dimen.bill_type_name_height);
+                int spanCount = rvHeight / itemHeight;
+                Log.e(TAG, "onGlobalLayout: rvHeight="+rvHeight+";itemHeight="+itemHeight+";spanCount="+spanCount);
+                GridLayoutManager glm = new GridLayoutManager(WriteBillActivity.this,spanCount,GridLayoutManager.HORIZONTAL,false);
+                rvBillType.setLayoutManager(glm);
+                rvBillType.setAdapter(billTypeAdapter);
+                rvBillType.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+
+
         rvBillType.setItemAnimator(new DefaultItemAnimator());
         billTypes = DBUtil.getBillTypes((int)tvBillType.getTag());
         billTypeAdapter = new BillTypeAdapter(this, billTypes);
-        rvBillType.setAdapter(billTypeAdapter);
+
         billTypeAdapter.setOnClickListener(onItemClickListener);
         imgChooseBillType = (ImageView) findViewById(R.id.choose_bill_type);
         imgChooseBillType.setTag(billTypes.get(0));

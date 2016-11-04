@@ -6,7 +6,7 @@
 
     <ImageView
         android:id="@+id/bill_type_icon"
-        android:layout_width="@dimen/bill_type_icon_width"
+        android:layout_width="38dp"
         android:layout_height="@dimen/bill_type_icon_height"
         android:src="@mipmap/ic_map_canying"
         android:layout_gravity="center"/>
@@ -14,7 +14,7 @@
     <TextView
         android:id="@+id/bill_type_name"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/bill_type_name_height"
         android:layout_gravity="center"
         android:textSize="18sp"
         android:text="餐饮"/>

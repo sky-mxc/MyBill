@@ -9,4 +9,5 @@
     <dimen name="choose_pay_item_height">70dp</dimen>
     <dimen name="bill_type_icon_width">40dp</dimen>
     <dimen name="bill_type_icon_height">40dp</dimen>
+    <dimen name="bill_type_name_height">40dp</dimen>
 </resources>
